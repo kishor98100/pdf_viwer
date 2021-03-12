@@ -25,7 +25,7 @@ enum IndicatorPosition { topLeft, topRight, bottomLeft, bottomRight }
 /// [maxScale] maximum zoom scale for pdf page
 /// [panLimit] pan limit for pdf page
 /// [onPageChanged] function called when page changes
-/// 
+///
 class PDFViewer extends StatefulWidget {
   final PDFDocument document;
   final Color indicatorText;
@@ -96,7 +96,7 @@ class _PDFViewerState extends State<PDFViewer> {
   @override
   void initState() {
     super.initState();
-    _pages = List(widget.document.count);
+    _pages = List.filled(widget.document.count, null);
     _pageController = widget.controller ?? PageController();
     _pageNumber = _pageController.initialPage + 1;
     if (!widget.lazyLoad)
@@ -114,7 +114,7 @@ class _PDFViewerState extends State<PDFViewer> {
     super.didChangeDependencies();
     _pageNumber = _pageController.initialPage + 1;
     _isLoading = true;
-    _pages = List(widget.document.count);
+    _pages = List.filled(widget.document.count, null);
     // _loadAllPages();
     _loadPage();
   }
@@ -168,19 +168,12 @@ class _PDFViewerState extends State<PDFViewer> {
 
   Widget _drawIndicator() {
     Widget child = GestureDetector(
-        onTap:
-            widget.showPicker && widget.document.count > 1 ? _pickPage : null,
+        onTap: widget.showPicker && widget.document.count > 1 ? _pickPage : null,
         child: Container(
-            padding:
-                EdgeInsets.only(top: 4.0, left: 16.0, bottom: 4.0, right: 16.0),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.0),
-                color: widget.indicatorBackground),
+            padding: EdgeInsets.only(top: 4.0, left: 16.0, bottom: 4.0, right: 16.0),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4.0), color: widget.indicatorBackground),
             child: Text("$_pageNumber/${widget.document.count}",
-                style: TextStyle(
-                    color: widget.indicatorText,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w400))));
+                style: TextStyle(color: widget.indicatorText, fontSize: 16.0, fontWeight: FontWeight.w400))));
 
     switch (widget.indicatorPosition) {
       case IndicatorPosition.topLeft:
@@ -220,11 +213,29 @@ class _PDFViewerState extends State<PDFViewer> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
+          Positioned(
+            top: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: Container(
+              color: Color(0xFF2a2a2a),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+              child: Text(
+                '${widget.document.fileName}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13.0,
+                  color: Color(
+                    0xFFffffff,
+                  ),
+                ),
+              ),
+            ),
+          ),
           PageView.builder(
             physics:
-                _swipeEnabled && widget.enableSwipeNavigation && !_isLoading
-                    ? null
-                    : NeverScrollableScrollPhysics(),
+                _swipeEnabled && widget.enableSwipeNavigation && !_isLoading ? null : NeverScrollableScrollPhysics(),
             onPageChanged: (page) {
               setState(() {
                 _pageNumber = page + 1;
@@ -237,14 +248,11 @@ class _PDFViewerState extends State<PDFViewer> {
             itemCount: _pages?.length ?? 0,
             itemBuilder: (context, index) => _pages[index] == null
                 ? Center(
-                    child:
-                        widget.progressIndicator ?? CircularProgressIndicator(),
+                    child: widget.progressIndicator ?? CircularProgressIndicator(),
                   )
                 : _pages[index],
           ),
-          (widget.showIndicator && !_isLoading)
-              ? _drawIndicator()
-              : Container(),
+          (widget.showIndicator && !_isLoading) ? _drawIndicator() : Container(),
         ],
       ),
       floatingActionButton: widget.showPicker && widget.document.count > 1
@@ -271,73 +279,86 @@ class _PDFViewerState extends State<PDFViewer> {
                   _jumpToPage,
                   _animateToPage,
                 )
-              : BottomAppBar(
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: IconButton(
-                          icon: Icon(Icons.first_page),
-                          tooltip: widget.tooltip.first,
-                          onPressed: _pageNumber == 1 || _isLoading
-                              ? null
-                              : () {
-                                  _pageNumber = 1;
-                                  _jumpToPage();
-                                },
+              : SizedBox(
+                  height: 36.0,
+                  child: BottomAppBar(
+                    elevation: 0.0,
+                    color: Color(0xFF2a2a2a),
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // Expanded(
+                        //   child: IconButton(
+                        //     icon: Icon(Icons.first_page),
+                        //     tooltip: widget.tooltip.first,
+                        //     onPressed: _pageNumber == 1 || _isLoading
+                        //         ? null
+                        //         : () {
+                        //             _pageNumber = 1;
+                        //             _jumpToPage();
+                        //           },
+                        //   ),
+                        // ),
+                        CircleAvatar(
+                          radius: 8.0,
+                          backgroundColor: Colors.white,
+                          child: IconButton(
+                            icon: Icon(Icons.chevron_left),
+                            tooltip: widget.tooltip.previous,
+                            onPressed: _pageNumber == 1 || _isLoading
+                                ? null
+                                : () {
+                                    _pageNumber--;
+                                    if (1 > _pageNumber) {
+                                      _pageNumber = 1;
+                                    }
+                                    _animateToPage();
+                                  },
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: IconButton(
-                          icon: Icon(Icons.chevron_left),
-                          tooltip: widget.tooltip.previous,
-                          onPressed: _pageNumber == 1 || _isLoading
-                              ? null
-                              : () {
-                                  _pageNumber--;
-                                  if (1 > _pageNumber) {
-                                    _pageNumber = 1;
-                                  }
-                                  _animateToPage();
-                                },
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Text(
+                            '$_pageNumber of ${widget.document.count}',
+                            style: TextStyle(color: Colors.white, fontSize: 13.0),
+                          ),
                         ),
-                      ),
-                      widget.showPicker
-                          ? Expanded(child: Text(''))
-                          : SizedBox(width: 1),
-                      Expanded(
-                        child: IconButton(
-                          icon: Icon(Icons.chevron_right),
-                          tooltip: widget.tooltip.next,
-                          onPressed:
-                              _pageNumber == widget.document.count || _isLoading
-                                  ? null
-                                  : () {
-                                      _pageNumber++;
-                                      if (widget.document.count < _pageNumber) {
-                                        _pageNumber = widget.document.count;
-                                      }
-                                      _animateToPage();
-                                    },
-                        ),
-                      ),
-                      Expanded(
-                        child: IconButton(
-                          icon: Icon(Icons.last_page),
-                          tooltip: widget.tooltip.last,
-                          onPressed:
-                              _pageNumber == widget.document.count || _isLoading
-                                  ? null
-                                  : () {
+                        CircleAvatar(
+                          radius: 8.0,
+                          backgroundColor: Colors.white,
+                          child: IconButton(
+                            icon: Icon(Icons.chevron_right),
+                            tooltip: widget.tooltip.next,
+                            onPressed: _pageNumber == widget.document.count || _isLoading
+                                ? null
+                                : () {
+                                    _pageNumber++;
+                                    if (widget.document.count < _pageNumber) {
                                       _pageNumber = widget.document.count;
-                                      _jumpToPage();
-                                    },
+                                    }
+                                    _animateToPage();
+                                  },
+                          ),
                         ),
-                      ),
-                    ],
+                        // Expanded(
+                        //   child: IconButton(
+                        //     icon: Icon(Icons.last_page),
+                        //     tooltip: widget.tooltip.last,
+                        //     onPressed: _pageNumber == widget.document.count || _isLoading
+                        //         ? null
+                        //         : () {
+                        //             _pageNumber = widget.document.count;
+                        //             _jumpToPage();
+                        //           },
+                        //   ),
+                        // ),
+                      ],
+                    ),
                   ),
                 )
-          : Container(height: 0,),
+          : Container(
+              height: 0,
+            ),
     );
   }
 }
