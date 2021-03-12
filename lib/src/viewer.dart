@@ -213,26 +213,6 @@ class _PDFViewerState extends State<PDFViewer> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          Positioned(
-            top: 0.0,
-            left: 0.0,
-            right: 0.0,
-            child: Container(
-              color: Color(0xFF2a2a2a),
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
-              child: Text(
-                '${widget.document.fileName}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 13.0,
-                  color: Color(
-                    0xFFffffff,
-                  ),
-                ),
-              ),
-            ),
-          ),
           PageView.builder(
             physics:
                 _swipeEnabled && widget.enableSwipeNavigation && !_isLoading ? null : NeverScrollableScrollPhysics(),
@@ -253,6 +233,26 @@ class _PDFViewerState extends State<PDFViewer> {
                 : _pages[index],
           ),
           (widget.showIndicator && !_isLoading) ? _drawIndicator() : Container(),
+          Positioned(
+            top: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: Container(
+              color: Color(0xFF2a2a2a),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+              child: Text(
+                '${widget.document.fileName}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13.0,
+                  color: Color(
+                    0xFFffffff,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       floatingActionButton: widget.showPicker && widget.document.count > 1
@@ -300,12 +300,15 @@ class _PDFViewerState extends State<PDFViewer> {
                         //   ),
                         // ),
                         CircleAvatar(
-                          radius: 8.0,
+                          radius: 10.0,
                           backgroundColor: Colors.white,
-                          child: IconButton(
-                            icon: Icon(Icons.chevron_left),
-                            tooltip: widget.tooltip.previous,
-                            onPressed: _pageNumber == 1 || _isLoading
+                          child: InkWell(
+                            child: Icon(
+                              Icons.chevron_left,
+                              color: Colors.black,
+                              size: 18.0,
+                            ),
+                            onTap: _pageNumber == 1 || _isLoading
                                 ? null
                                 : () {
                                     _pageNumber--;
@@ -326,10 +329,13 @@ class _PDFViewerState extends State<PDFViewer> {
                         CircleAvatar(
                           radius: 8.0,
                           backgroundColor: Colors.white,
-                          child: IconButton(
-                            icon: Icon(Icons.chevron_right),
-                            tooltip: widget.tooltip.next,
-                            onPressed: _pageNumber == widget.document.count || _isLoading
+                          child: InkWell(
+                            child: Icon(
+                              Icons.chevron_right,
+                              color: Colors.black,
+                              size: 18.0,
+                            ),
+                            onTap: _pageNumber == widget.document.count || _isLoading
                                 ? null
                                 : () {
                                     _pageNumber++;
