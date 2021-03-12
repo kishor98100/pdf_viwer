@@ -306,7 +306,7 @@ class _PDFViewerState extends State<PDFViewer> {
                             child: Icon(
                               Icons.chevron_left,
                               color: Colors.black,
-                              size: 18.0,
+                              size: 20.0,
                             ),
                             onTap: _pageNumber == 1 || _isLoading
                                 ? null
@@ -333,7 +333,7 @@ class _PDFViewerState extends State<PDFViewer> {
                             child: Icon(
                               Icons.chevron_right,
                               color: Colors.black,
-                              size: 18.0,
+                              size: 20.0,
                             ),
                             onTap: _pageNumber == widget.document.count || _isLoading
                                 ? null
