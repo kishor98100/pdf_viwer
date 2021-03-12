@@ -327,7 +327,7 @@ class _PDFViewerState extends State<PDFViewer> {
                           ),
                         ),
                         CircleAvatar(
-                          radius: 8.0,
+                          radius: 10.0,
                           backgroundColor: Colors.white,
                           child: InkWell(
                             child: Icon(
