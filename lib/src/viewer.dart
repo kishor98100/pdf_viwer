@@ -29,6 +29,7 @@ enum IndicatorPosition { topLeft, topRight, bottomLeft, bottomRight }
 /// [previousIcon] previous icon
 /// [nextIcon] next icon
 /// [previewIcon] preview icon
+/// [showPreviewButton] show hide preview button
 ///
 class PDFViewer extends StatefulWidget {
   final PDFDocument document;
@@ -51,9 +52,10 @@ class PDFViewer extends StatefulWidget {
   final double panLimit;
   final ValueChanged<int> onPageChanged;
   final VoidCallback onPreviewPressed;
-  final IconData previousIcon;
-  final IconData nextIcon;
-  final IconData previewIcon;
+  final Icon previousIcon;
+  final Icon nextIcon;
+  final Icon previewIcon;
+  final bool showPreviewButton;
 
   final Widget Function(
     BuildContext,
@@ -88,9 +90,10 @@ class PDFViewer extends StatefulWidget {
     this.pickerIconColor,
     this.onPageChanged,
     this.onPreviewPressed,
-    this.previousIcon,
-    this.nextIcon,
-    this.previewIcon,
+    @required this.previousIcon,
+    @required this.nextIcon,
+    @required this.previewIcon,
+    this.showPreviewButton = true,
   }) : super(key: key);
 
   _PDFViewerState createState() => _PDFViewerState();
@@ -320,11 +323,7 @@ class _PDFViewerState extends State<PDFViewer> {
                                 radius: 10.0,
                                 backgroundColor: Colors.white,
                                 child: InkWell(
-                                  child: Icon(
-                                    widget.previousIcon,
-                                    color: Colors.white,
-                                    size: 20.0,
-                                  ),
+                                  child: widget.previousIcon,
                                   onTap: _pageNumber == 1 || _isLoading
                                       ? null
                                       : () {
@@ -349,11 +348,7 @@ class _PDFViewerState extends State<PDFViewer> {
                                 radius: 10.0,
                                 backgroundColor: Colors.white,
                                 child: InkWell(
-                                  child: Icon(
-                                    widget.nextIcon,
-                                    color: Colors.white,
-                                    size: 20.0,
-                                  ),
+                                  child: widget.nextIcon,
                                   onTap: _pageNumber == widget.document.count ||
                                           _isLoading
                                       ? null
@@ -370,10 +365,12 @@ class _PDFViewerState extends State<PDFViewer> {
                             ],
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(widget.previewIcon, color: Colors.white),
-                          onPressed: widget.onPreviewPressed,
-                        ),
+                        widget.showPreviewButton
+                            ? IconButton(
+                                icon: widget.previewIcon,
+                                onPressed: widget.onPreviewPressed,
+                              )
+                            : const SizedBox.shrink(),
                       ],
                     ),
                   ),
