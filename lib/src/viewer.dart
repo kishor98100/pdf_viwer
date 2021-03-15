@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 /// enum to describe indicator position
