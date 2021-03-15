@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 /// enum to describe indicator position
@@ -25,6 +26,7 @@ enum IndicatorPosition { topLeft, topRight, bottomLeft, bottomRight }
 /// [maxScale] maximum zoom scale for pdf page
 /// [panLimit] pan limit for pdf page
 /// [onPageChanged] function called when page changes
+/// [onPreviewPressed] function called when preview button on bottom bar pressed
 ///
 class PDFViewer extends StatefulWidget {
   final PDFDocument document;
@@ -46,6 +48,7 @@ class PDFViewer extends StatefulWidget {
   final double maxScale;
   final double panLimit;
   final ValueChanged<int> onPageChanged;
+  final VoidCallback onPreviewPressed;
 
   final Widget Function(
     BuildContext,
@@ -79,6 +82,7 @@ class PDFViewer extends StatefulWidget {
     this.pickerButtonColor,
     this.pickerIconColor,
     this.onPageChanged,
+    this.onPreviewPressed,
   }) : super(key: key);
 
   _PDFViewerState createState() => _PDFViewerState();
@@ -168,12 +172,19 @@ class _PDFViewerState extends State<PDFViewer> {
 
   Widget _drawIndicator() {
     Widget child = GestureDetector(
-        onTap: widget.showPicker && widget.document.count > 1 ? _pickPage : null,
+        onTap:
+            widget.showPicker && widget.document.count > 1 ? _pickPage : null,
         child: Container(
-            padding: EdgeInsets.only(top: 4.0, left: 16.0, bottom: 4.0, right: 16.0),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4.0), color: widget.indicatorBackground),
+            padding:
+                EdgeInsets.only(top: 4.0, left: 16.0, bottom: 4.0, right: 16.0),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4.0),
+                color: widget.indicatorBackground),
             child: Text("$_pageNumber/${widget.document.count}",
-                style: TextStyle(color: widget.indicatorText, fontSize: 16.0, fontWeight: FontWeight.w400))));
+                style: TextStyle(
+                    color: widget.indicatorText,
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w400))));
 
     switch (widget.indicatorPosition) {
       case IndicatorPosition.topLeft:
@@ -215,7 +226,9 @@ class _PDFViewerState extends State<PDFViewer> {
         children: <Widget>[
           PageView.builder(
             physics:
-                _swipeEnabled && widget.enableSwipeNavigation && !_isLoading ? null : NeverScrollableScrollPhysics(),
+                _swipeEnabled && widget.enableSwipeNavigation && !_isLoading
+                    ? null
+                    : NeverScrollableScrollPhysics(),
             onPageChanged: (page) {
               setState(() {
                 _pageNumber = page + 1;
@@ -228,18 +241,22 @@ class _PDFViewerState extends State<PDFViewer> {
             itemCount: _pages?.length ?? 0,
             itemBuilder: (context, index) => _pages[index] == null
                 ? Center(
-                    child: widget.progressIndicator ?? CircularProgressIndicator(),
+                    child:
+                        widget.progressIndicator ?? CircularProgressIndicator(),
                   )
                 : _pages[index],
           ),
-          (widget.showIndicator && !_isLoading) ? _drawIndicator() : Container(),
+          (widget.showIndicator && !_isLoading)
+              ? _drawIndicator()
+              : Container(),
           Positioned(
             top: 0.0,
             left: 0.0,
             right: 0.0,
             child: Container(
               color: Color(0xFF2a2a2a),
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
               child: Text(
                 '${widget.document.fileName}',
                 maxLines: 1,
@@ -287,77 +304,67 @@ class _PDFViewerState extends State<PDFViewer> {
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        // Expanded(
-                        //   child: IconButton(
-                        //     icon: Icon(Icons.first_page),
-                        //     tooltip: widget.tooltip.first,
-                        //     onPressed: _pageNumber == 1 || _isLoading
-                        //         ? null
-                        //         : () {
-                        //             _pageNumber = 1;
-                        //             _jumpToPage();
-                        //           },
-                        //   ),
-                        // ),
-                        CircleAvatar(
-                          radius: 10.0,
-                          backgroundColor: Colors.white,
-                          child: InkWell(
-                            child: Icon(
-                              Icons.chevron_left,
-                              color: Colors.black,
-                              size: 20.0,
-                            ),
-                            onTap: _pageNumber == 1 || _isLoading
-                                ? null
-                                : () {
-                                    _pageNumber--;
-                                    if (1 > _pageNumber) {
-                                      _pageNumber = 1;
-                                    }
-                                    _animateToPage();
-                                  },
+                        Expanded(
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 10.0,
+                                backgroundColor: Colors.white,
+                                child: InkWell(
+                                  child: Icon(
+                                    Ionicons.chevron_back_circle,
+                                    color: Colors.white,
+                                    size: 20.0,
+                                  ),
+                                  onTap: _pageNumber == 1 || _isLoading
+                                      ? null
+                                      : () {
+                                          _pageNumber--;
+                                          if (1 > _pageNumber) {
+                                            _pageNumber = 1;
+                                          }
+                                          _animateToPage();
+                                        },
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0),
+                                child: Text(
+                                  '$_pageNumber of ${widget.document.count}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 13.0),
+                                ),
+                              ),
+                              CircleAvatar(
+                                radius: 10.0,
+                                backgroundColor: Colors.white,
+                                child: InkWell(
+                                  child: Icon(
+                                    Ionicons.chevron_forward_circle,
+                                    color: Colors.black,
+                                    size: 20.0,
+                                  ),
+                                  onTap: _pageNumber == widget.document.count ||
+                                          _isLoading
+                                      ? null
+                                      : () {
+                                          _pageNumber++;
+                                          if (widget.document.count <
+                                              _pageNumber) {
+                                            _pageNumber = widget.document.count;
+                                          }
+                                          _animateToPage();
+                                        },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                          child: Text(
-                            '$_pageNumber of ${widget.document.count}',
-                            style: TextStyle(color: Colors.white, fontSize: 13.0),
-                          ),
+                        IconButton(
+                          icon: Icon(Ionicons.expand),
+                          onPressed: widget.onPreviewPressed,
                         ),
-                        CircleAvatar(
-                          radius: 10.0,
-                          backgroundColor: Colors.white,
-                          child: InkWell(
-                            child: Icon(
-                              Icons.chevron_right,
-                              color: Colors.black,
-                              size: 20.0,
-                            ),
-                            onTap: _pageNumber == widget.document.count || _isLoading
-                                ? null
-                                : () {
-                                    _pageNumber++;
-                                    if (widget.document.count < _pageNumber) {
-                                      _pageNumber = widget.document.count;
-                                    }
-                                    _animateToPage();
-                                  },
-                          ),
-                        ),
-                        // Expanded(
-                        //   child: IconButton(
-                        //     icon: Icon(Icons.last_page),
-                        //     tooltip: widget.tooltip.last,
-                        //     onPressed: _pageNumber == widget.document.count || _isLoading
-                        //         ? null
-                        //         : () {
-                        //             _pageNumber = widget.document.count;
-                        //             _jumpToPage();
-                        //           },
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),
