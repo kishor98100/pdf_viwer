@@ -27,6 +27,9 @@ enum IndicatorPosition { topLeft, topRight, bottomLeft, bottomRight }
 /// [panLimit] pan limit for pdf page
 /// [onPageChanged] function called when page changes
 /// [onPreviewPressed] function called when preview button on bottom bar pressed
+/// [previousIcon] previous icon
+/// [nextIcon] next icon
+/// [previewIcon] preview icon
 ///
 class PDFViewer extends StatefulWidget {
   final PDFDocument document;
@@ -49,6 +52,9 @@ class PDFViewer extends StatefulWidget {
   final double panLimit;
   final ValueChanged<int> onPageChanged;
   final VoidCallback onPreviewPressed;
+  final IconData previousIcon;
+  final IconData nextIcon;
+  final IconData previewIcon;
 
   final Widget Function(
     BuildContext,
@@ -83,6 +89,9 @@ class PDFViewer extends StatefulWidget {
     this.pickerIconColor,
     this.onPageChanged,
     this.onPreviewPressed,
+    this.previousIcon,
+    this.nextIcon,
+    this.previewIcon,
   }) : super(key: key);
 
   _PDFViewerState createState() => _PDFViewerState();
@@ -313,8 +322,8 @@ class _PDFViewerState extends State<PDFViewer> {
                                 backgroundColor: Colors.white,
                                 child: InkWell(
                                   child: Icon(
-                                    Ionicons.chevron_back_circle,
-                                    color: Colors.black,
+                                    widget.previousIcon,
+                                    color: Colors.white,
                                     size: 20.0,
                                   ),
                                   onTap: _pageNumber == 1 || _isLoading
@@ -342,8 +351,8 @@ class _PDFViewerState extends State<PDFViewer> {
                                 backgroundColor: Colors.white,
                                 child: InkWell(
                                   child: Icon(
-                                    Ionicons.chevron_forward_circle,
-                                    color: Colors.black,
+                                    widget.nextIcon,
+                                    color: Colors.white,
                                     size: 20.0,
                                   ),
                                   onTap: _pageNumber == widget.document.count ||
@@ -363,7 +372,7 @@ class _PDFViewerState extends State<PDFViewer> {
                           ),
                         ),
                         IconButton(
-                          icon: Icon(Ionicons.expand, color: Colors.white),
+                          icon: Icon(widget.previewIcon, color: Colors.white),
                           onPressed: widget.onPreviewPressed,
                         ),
                       ],
