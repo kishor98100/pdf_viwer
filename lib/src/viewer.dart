@@ -306,6 +306,7 @@ class _PDFViewerState extends State<PDFViewer> {
                       children: <Widget>[
                         Expanded(
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CircleAvatar(
                                 radius: 10.0,
@@ -313,7 +314,7 @@ class _PDFViewerState extends State<PDFViewer> {
                                 child: InkWell(
                                   child: Icon(
                                     Ionicons.chevron_back_circle,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     size: 20.0,
                                   ),
                                   onTap: _pageNumber == 1 || _isLoading
@@ -362,7 +363,7 @@ class _PDFViewerState extends State<PDFViewer> {
                           ),
                         ),
                         IconButton(
-                          icon: Icon(Ionicons.expand),
+                          icon: Icon(Ionicons.expand, color: Colors.white),
                           onPressed: widget.onPreviewPressed,
                         ),
                       ],
