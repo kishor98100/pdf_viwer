@@ -318,22 +318,19 @@ class _PDFViewerState extends State<PDFViewer> {
                         Expanded(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              CircleAvatar(
-                                radius: 10.0,
-                                backgroundColor: Colors.white,
-                                child: InkWell(
-                                  child: widget.previousIcon,
-                                  onTap: _pageNumber == 1 || _isLoading
-                                      ? null
-                                      : () {
-                                          _pageNumber--;
-                                          if (1 > _pageNumber) {
-                                            _pageNumber = 1;
-                                          }
-                                          _animateToPage();
-                                        },
-                                ),
+                              InkWell(
+                                child: widget.previousIcon,
+                                onTap: _pageNumber == 1 || _isLoading
+                                    ? null
+                                    : () {
+                                        _pageNumber--;
+                                        if (1 > _pageNumber) {
+                                          _pageNumber = 1;
+                                        }
+                                        _animateToPage();
+                                      },
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -344,23 +341,19 @@ class _PDFViewerState extends State<PDFViewer> {
                                       color: Colors.white, fontSize: 13.0),
                                 ),
                               ),
-                              CircleAvatar(
-                                radius: 10.0,
-                                backgroundColor: Colors.white,
-                                child: InkWell(
-                                  child: widget.nextIcon,
-                                  onTap: _pageNumber == widget.document.count ||
-                                          _isLoading
-                                      ? null
-                                      : () {
-                                          _pageNumber++;
-                                          if (widget.document.count <
-                                              _pageNumber) {
-                                            _pageNumber = widget.document.count;
-                                          }
-                                          _animateToPage();
-                                        },
-                                ),
+                              InkWell(
+                                child: widget.nextIcon,
+                                onTap: _pageNumber == widget.document.count ||
+                                        _isLoading
+                                    ? null
+                                    : () {
+                                        _pageNumber++;
+                                        if (widget.document.count <
+                                            _pageNumber) {
+                                          _pageNumber = widget.document.count;
+                                        }
+                                        _animateToPage();
+                                      },
                               ),
                             ],
                           ),
