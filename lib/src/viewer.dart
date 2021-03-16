@@ -314,7 +314,11 @@ class _PDFViewerState extends State<PDFViewer> {
                     color: Color(0xFF2a2a2a),
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
+                        Expanded(
+                          child: const SizedBox.shrink(),
+                        ),
                         Expanded(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
