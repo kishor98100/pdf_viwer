@@ -83,6 +83,24 @@ class _MyAppState extends State<MyApp> {
               : PDFViewer(
                   document: document,
                   zoomSteps: 1,
+                  showPicker: false,
+                  showIndicator: false,
+                  enableSwipeNavigation: false,
+                  showNavigation: true,
+                  previousIcon: Icon(
+                    Icons.chevron_left,
+                    color: Colors.white,
+                  ),
+                  nextIcon: Icon(
+                    Icons.chevron_right,
+                    color: Colors.white,
+                  ),
+                  previewIcon: Icon(
+                    Icons.preview,
+                    color: Colors.white,
+                    size: 20.0,
+                  ),
+                  onPreviewPressed: () {},
                   //uncomment below line to preload all pages
                   // lazyLoad: false,
                   // uncomment below line to scroll vertically
