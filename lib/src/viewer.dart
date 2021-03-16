@@ -320,6 +320,7 @@ class _PDFViewerState extends State<PDFViewer> {
                           child: const SizedBox.shrink(),
                         ),
                         Expanded(
+                          flex: 2,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
