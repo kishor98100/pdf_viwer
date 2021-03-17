@@ -363,19 +363,19 @@ class _PDFViewerState extends State<PDFViewer> {
                             ],
                           ),
                         ),
-                        widget.showPreviewButton
-                            ? Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    IconButton(
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              widget.showPreviewButton
+                                  ? IconButton(
                                       icon: widget.previewIcon,
                                       onPressed: widget.onPreviewPressed,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : const SizedBox.shrink(),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ),

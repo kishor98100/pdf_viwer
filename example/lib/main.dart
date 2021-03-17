@@ -101,6 +101,7 @@ class _MyAppState extends State<MyApp> {
                     size: 20.0,
                   ),
                   onPreviewPressed: () {},
+                  showPreviewButton: false,
                   //uncomment below line to preload all pages
                   // lazyLoad: false,
                   // uncomment below line to scroll vertically
