@@ -1,10 +1,12 @@
 package pt.tribeiro.flutter_plugin_pdf_viewer;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.pdf.PdfRenderer;
 import android.os.Environment;
+import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
@@ -12,18 +14,23 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
-
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.os.HandlerThread;
 import android.os.Process;
 import android.os.Handler;
+
+import android.app.Activity;
+import android.app.Application;
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.PluginRegistry;
 
 /**
  * FlutterPluginPdfViewerPlugin
