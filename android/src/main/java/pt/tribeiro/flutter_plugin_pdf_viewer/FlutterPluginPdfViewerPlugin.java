@@ -27,8 +27,12 @@ import android.os.Handler;
 /**
  * FlutterPluginPdfViewerPlugin
  */
-public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler {
-    private static Registrar instance;
+public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler,FlutterPlugin {
+    private static FlutterPluginPdfViewerPlugin instance;
+    private final Object initializationLock = new Object();
+    private MethodChannel flutterChannel;
+    private Context context;
+
     private HandlerThread handlerThread;
     private Handler backgroundHandler;
     private final Object pluginLocker = new Object();
@@ -37,16 +41,40 @@ public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler {
     /**
      * Plugin registration.
      */
-    public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_plugin_pdf_viewer");
-        instance = registrar;
-        channel.setMethodCallHandler(new FlutterPluginPdfViewerPlugin());
+    public static void registerWith(PluginRegistry.Registrar registrar) {
+        if (instance == null) {
+            instance = new FlutterPluginPdfViewerPlugin();
+        }
+        instance.onAttachedToEngine(registrar.context(), registrar.messenger());
     }
 
-    
+    public void onAttachedToEngine(Context applicationContext, BinaryMessenger messenger) {
+        synchronized (initializationLock) {
+            if(flutterChannel != null) {
+                return;
+            }
+            this.context = applicationContext;
+            flutterChannel = new MethodChannel(messenger,"flutter_plugin_pdf_viewer");
+            flutterChannel.setMethodCallHandler(this);
+        }
+    }
 
     @Override
-    public void onMethodCall(final MethodCall call, final Result result) {
+    public void onAttachedToEngine(FlutterPluginBinding binding) {
+        onAttachedToEngine(binding.getApplicationContext(), binding.getBinaryMessenger());
+    }
+
+    @Override
+    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+        context = null;
+        if (flutterChannel != null) {
+            flutterChannel.setMethodCallHandler(null);
+            flutterChannel = null;
+        }
+    }
+
+    @Override
+    public void onMethodCall(final MethodCall call, final MethodChannel.Result result) {
         synchronized (pluginLocker) {
             if (backgroundHandler == null) {
                 handlerThread = new HandlerThread("flutterPdfViewer", Process.THREAD_PRIORITY_BACKGROUND);
@@ -54,7 +82,7 @@ public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler {
                 backgroundHandler = new Handler(handlerThread.getLooper());
             }
         }
-        final Handler mainThreadHandler = new Handler();
+        final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
         backgroundHandler.post(//
                 new Runnable() {
                     @Override
@@ -79,8 +107,22 @@ public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler {
                                     }
                                 });
                                 break;
+                            case "clearCache":
+                                clearCacheDir();
+                                mainThreadHandler.post(new Runnable() {
+                                    @Override
+                                    public  void run() {
+                                        result.success("clearCache");
+                                    }
+                                });
+                                break;
                             default:
-                                result.notImplemented();
+                                mainThreadHandler.post(new Runnable() {
+                                    @Override
+                                    public  void run() {
+                                        result.notImplemented();
+                                    }
+                                });
                                 break;
                         }
                     }
@@ -94,6 +136,7 @@ public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler {
             PdfRenderer renderer = new PdfRenderer(ParcelFileDescriptor.open(pdf, ParcelFileDescriptor.MODE_READ_ONLY));
             Bitmap bitmap;
             final int pageCount = renderer.getPageCount();
+            renderer.close();
             return String.format("%d", pageCount);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -103,7 +146,7 @@ public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler {
 
     private boolean clearCacheDir() {
         try {
-            File directory = instance.context().getCacheDir();
+            File directory = context.getCacheDir();
             FilenameFilter myFilter = new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
@@ -134,7 +177,7 @@ public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler {
         File file;
         try {
             String fileName = String.format("%s-%d.png", fileNameOnly, page);
-            file = File.createTempFile(fileName, null, instance.context().getCacheDir());
+            file = File.createTempFile(fileName, null, context.getCacheDir());
             FileOutputStream out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
@@ -157,9 +200,8 @@ public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler {
 
             PdfRenderer.Page page = renderer.openPage(--pageNumber);
 
-            
-            double width = instance.activity().getResources().getDisplayMetrics().densityDpi * page.getWidth();
-            double height = instance.activity().getResources().getDisplayMetrics().densityDpi * page.getHeight();
+            double width = context.getResources().getDisplayMetrics().densityDpi * page.getWidth();
+            double height = context.getResources().getDisplayMetrics().densityDpi * page.getHeight();
             final double docRatio = width / height;
 
             width = 2048;
