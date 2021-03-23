@@ -35,7 +35,7 @@ import io.flutter.plugin.common.PluginRegistry;
 /**
  * FlutterPluginPdfViewerPlugin
  */
-public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler,FlutterPlugin {
+public class FlutterPluginPdfViewerPlugin  implements MethodCall.MethodCallHandler,FlutterPlugin {
     private static FlutterPluginPdfViewerPlugin instance;
     private final Object initializationLock = new Object();
     private MethodChannel flutterChannel;
