@@ -17,6 +17,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.os.HandlerThread;
@@ -26,7 +27,7 @@ import android.os.Handler;
 /**
  * FlutterPluginPdfViewerPlugin
  */
-public class FlutterPluginPdfViewerPlugin implements MethodCallHandler {
+public class FlutterPluginPdfViewerPlugin  implements MethodCallHandler {
     private static Registrar instance;
     private HandlerThread handlerThread;
     private Handler backgroundHandler;
@@ -41,6 +42,8 @@ public class FlutterPluginPdfViewerPlugin implements MethodCallHandler {
         instance = registrar;
         channel.setMethodCallHandler(new FlutterPluginPdfViewerPlugin());
     }
+
+    
 
     @Override
     public void onMethodCall(final MethodCall call, final Result result) {
@@ -57,28 +60,28 @@ public class FlutterPluginPdfViewerPlugin implements MethodCallHandler {
                     @Override
                     public void run() {
                         switch (call.method) {
-                        case "getNumberOfPages":
-                            final String numResult = getNumberOfPages((String) call.argument("filePath"));
-                            mainThreadHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    result.success(numResult);
-                                }
-                            });
-                            break;
-                        case "getPage":
-                            final String pageResult = getPage((String) call.argument("filePath"),
-                                    (int) call.argument("pageNumber"));
-                            mainThreadHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    result.success(pageResult);
-                                }
-                            });
-                            break;
-                        default:
-                            result.notImplemented();
-                            break;
+                            case "getNumberOfPages":
+                                final String numResult = getNumberOfPages((String) call.argument("filePath"));
+                                mainThreadHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        result.success(numResult);
+                                    }
+                                });
+                                break;
+                            case "getPage":
+                                final String pageResult = getPage((String) call.argument("filePath"),
+                                        (int) call.argument("pageNumber"));
+                                mainThreadHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        result.success(pageResult);
+                                    }
+                                });
+                                break;
+                            default:
+                                result.notImplemented();
+                                break;
                         }
                     }
                 });
@@ -154,6 +157,7 @@ public class FlutterPluginPdfViewerPlugin implements MethodCallHandler {
 
             PdfRenderer.Page page = renderer.openPage(--pageNumber);
 
+            
             double width = instance.activity().getResources().getDisplayMetrics().densityDpi * page.getWidth();
             double height = instance.activity().getResources().getDisplayMetrics().densityDpi * page.getHeight();
             final double docRatio = width / height;
