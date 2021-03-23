@@ -111,7 +111,7 @@ class _PDFViewerState extends State<PDFViewer> {
   @override
   void initState() {
     super.initState();
-    _pages = List.filled(widget.document.count, null);
+    _pages = List(widget.document.count);
     _pageController = widget.controller ?? PageController();
     _pageNumber = _pageController.initialPage + 1;
     if (!widget.lazyLoad)
@@ -129,7 +129,7 @@ class _PDFViewerState extends State<PDFViewer> {
     super.didChangeDependencies();
     _pageNumber = _pageController.initialPage + 1;
     _isLoading = true;
-    _pages = List.filled(widget.document.count, null);
+    _pages = List(widget.document.count);
     // _loadAllPages();
     _loadPage();
   }
