@@ -183,19 +183,12 @@ class _PDFViewerState extends State<PDFViewer> {
 
   Widget _drawIndicator() {
     Widget child = GestureDetector(
-        onTap:
-            widget.showPicker && widget.document.count > 1 ? _pickPage : null,
+        onTap: widget.showPicker && widget.document.count > 1 ? _pickPage : null,
         child: Container(
-            padding:
-                EdgeInsets.only(top: 4.0, left: 16.0, bottom: 4.0, right: 16.0),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.0),
-                color: widget.indicatorBackground),
+            padding: EdgeInsets.only(top: 4.0, left: 16.0, bottom: 4.0, right: 16.0),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4.0), color: widget.indicatorBackground),
             child: Text("$_pageNumber/${widget.document.count}",
-                style: TextStyle(
-                    color: widget.indicatorText,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w400))));
+                style: TextStyle(color: widget.indicatorText, fontSize: 16.0, fontWeight: FontWeight.w400))));
 
     switch (widget.indicatorPosition) {
       case IndicatorPosition.topLeft:
@@ -249,22 +242,18 @@ class _PDFViewerState extends State<PDFViewer> {
             itemCount: _pages?.length ?? 0,
             itemBuilder: (context, index) => _pages[index] == null
                 ? Center(
-                    child:
-                        widget.progressIndicator ?? CircularProgressIndicator(),
+                    child: widget.progressIndicator ?? CircularProgressIndicator(),
                   )
                 : _pages[index],
           ),
-          (widget.showIndicator && !_isLoading)
-              ? _drawIndicator()
-              : Container(),
+          (widget.showIndicator && !_isLoading) ? _drawIndicator() : Container(),
           Positioned(
             top: 0.0,
             left: 0.0,
             right: 0.0,
             child: Container(
               color: Color(0xFF2a2a2a),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
               child: Text(
                 '${widget.document.fileName}',
                 maxLines: 1,
@@ -280,7 +269,7 @@ class _PDFViewerState extends State<PDFViewer> {
           ),
         ],
       ),
-      floatingActionButton: widget.showPicker && widget.document.count > 1
+      floatingActionButton: widget.showPicker && widget.document.count >= 1
           ? FloatingActionButton(
               elevation: 4.0,
               tooltip: widget.tooltip.jump,
@@ -335,23 +324,19 @@ class _PDFViewerState extends State<PDFViewer> {
                                       },
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 12.0),
                                 child: Text(
                                   '$_pageNumber of ${widget.document.count}',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 13.0),
+                                  style: TextStyle(color: Colors.white, fontSize: 13.0),
                                 ),
                               ),
                               InkWell(
                                 child: widget.nextIcon,
-                                onTap: _pageNumber == widget.document.count ||
-                                        _isLoading
+                                onTap: _pageNumber == widget.document.count || _isLoading
                                     ? null
                                     : () {
                                         _pageNumber++;
-                                        if (widget.document.count <
-                                            _pageNumber) {
+                                        if (widget.document.count < _pageNumber) {
                                           _pageNumber = widget.document.count;
                                         }
                                         _animateToPage();
